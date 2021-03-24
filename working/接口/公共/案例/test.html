@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title></title>
+    </head>
+    <body>
+        <div align="center">
+        <h4>案例</h4>
+
+        <select id="select_btn" style="width: 100px; height: 25px">
+          <option style='display: none' value='' disabled selected>选择框</option>
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="opel">Opel</option>
+          <option value="audi">Audi</option>
+        </select>
+
+        <input type="button" onclick="showPro()" value="输入框弹窗按钮"/>
+        <input type="button" onclick="showAlert2()" value="提示弹窗按钮"/>
+        <input type="button" onclick="showAlert()" value="确认弹窗按钮"/>
+        <span id="textSpan"></span>
+        </div>
+
+
+    </body>
+    <script>
+        function showAlert(){
+            document.getElementById("textSpan").innerHTML="";
+            if(confirm("请确认点击")){
+                document.getElementById("textSpan").innerHTML="<font style='color: red;'>完毕</font>";
+            }else{
+                document.getElementById("textSpan").innerHTML="<font style='color: red;'>重新再来</font>";
+            }
+
+        }
+        function showPro(){
+            document.getElementById("textSpan").innerHTML="";
+            con = prompt("输入1为手动操作，输入2为自动操作");
+            if(con==1){
+                document.getElementById("textSpan").innerHTML="<font style='color: green;'>手动操作</font>";
+            }else if(con==2){
+                document.getElementById("textSpan").innerHTML="<font style='color: green;'>自动操作</font>";
+            }else{
+                document.getElementById("textSpan").innerHTML="<font style='color: red;'>您没有按要求输入，请重新输入</font>";
+            }
+        }
+        function showAlert2(){
+            document.getElementById("textSpan").innerHTML="";
+            alert("Hello World！！！");
+        }
+    </script>
+</html>
