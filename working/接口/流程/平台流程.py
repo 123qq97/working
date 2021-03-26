@@ -141,7 +141,7 @@ url_dict = {
 # 流程开始
 class process:
 
-    def __init__(self, odd_num, handing_username='17666121214',handing_password='123456',head_url='http://192.168.0.58:82'):
+    def __init__(self, odd_num=None, handing_username='17666121214',handing_password='123456',head_url='http://192.168.0.58:82'):
         stime = time.time()
         global null, true, false
         null = None
@@ -162,88 +162,90 @@ class process:
         self.chargeDate = local_to_utc()            #当前地区时间
         self.stampDate = local_to_time_stamp()      #当前日期时间戳
 
+        if odd_num == None:
+            pass
+        else:
+            # 查询担保单列表,获取单号对应id
+            def guaratee_message(url, html, odd_num):
+                guarateeID_url = url['初始化参数']['报单列表'][0] + odd_num
+                response = html.get(guarateeID_url).text
+                response = eval(response)
+                id = response['result']['items'][0]['id']
 
-        # 查询担保单列表,获取单号对应id
-        def guaratee_message(url, html, odd_num):
-            guarateeID_url = url['初始化参数']['报单列表'][0] + odd_num
-            response = html.get(guarateeID_url).text
-            response = eval(response)
-            id = response['result']['items'][0]['id']
+                guarateetype_url = url['初始化参数']['报单列表'][1] + id
+                response1 = html.get(guarateetype_url).text
+                response1 = eval(response1)
+                return response1, response
 
-            guarateetype_url = url['初始化参数']['报单列表'][1] + id
-            response1 = html.get(guarateetype_url).text
-            response1 = eval(response1)
-            return response1, response
+            #使用多线程调用函数
+            guarateeMessage_thread = myThread(guaratee_message,kwargs={'url':self.url,'html':self.html,'odd_num':self.odd_num})
+            pickPersonInfoMessage_thread = myThread(pickPersonInfo_message,kwargs={'url':self.url,'html':self.html})
+            companyAccountMessage_thread = myThread(company_account_message,kwargs={'url':self.url,'orgId':self.orgId,'html':self.html})
+            fundProvider_thread = myThread(fundProvider_message,kwargs={'url':self.url,'html':self.html})
 
-        #使用多线程调用函数
-        guarateeMessage_thread = myThread(guaratee_message,kwargs={'url':self.url,'html':self.html,'odd_num':self.odd_num})
-        pickPersonInfoMessage_thread = myThread(pickPersonInfo_message,kwargs={'url':self.url,'html':self.html})
-        companyAccountMessage_thread = myThread(company_account_message,kwargs={'url':self.url,'orgId':self.orgId,'html':self.html})
-        fundProvider_thread = myThread(fundProvider_message,kwargs={'url':self.url,'html':self.html})
+            guarateeMessage_thread.start()
+            pickPersonInfoMessage_thread.start()
+            companyAccountMessage_thread.start()
+            fundProvider_thread.start()
 
-        guarateeMessage_thread.start()
-        pickPersonInfoMessage_thread.start()
-        companyAccountMessage_thread.start()
-        fundProvider_thread.start()
+            guarateeMessage_thread.join()
+            pickPersonInfoMessage_thread.join()
+            companyAccountMessage_thread.join()
+            fundProvider_thread.join()
 
-        guarateeMessage_thread.join()
-        pickPersonInfoMessage_thread.join()
-        companyAccountMessage_thread.join()
-        fundProvider_thread.join()
+            guarateeMessage_result = guarateeMessage_thread.get_result()[0]
+            guarateeMessage_result_to = guarateeMessage_thread.get_result()[1]
+            pickPersonInfoMessage_result = pickPersonInfoMessage_thread.get_result()
+            companyAccountMessage_result = companyAccountMessage_thread.get_result()
+            fundProvider_result = fundProvider_thread.get_result()
 
-        guarateeMessage_result = guarateeMessage_thread.get_result()[0]
-        guarateeMessage_result_to = guarateeMessage_thread.get_result()[1]
-        pickPersonInfoMessage_result = pickPersonInfoMessage_thread.get_result()
-        companyAccountMessage_result = companyAccountMessage_thread.get_result()
-        fundProvider_result = fundProvider_thread.get_result()
+            # 查询担保单列表,取值字段
+            self.fundType = guarateeMessage_result['result']['bizTypeModel']['fundType']
+            self.guaranteeBizType = guarateeMessage_result['result']['guarantee']['guaranteeBizType']    #区分拍卖房，值：PMF或null
+            self.isRedeemselfBiz = guarateeMessage_result['result']['bizTypeModel']['isRedeemselfBiz']   #是否自赎业务
+            self.transactionType = guarateeMessage_result['result']['bizTypeModel']['transactionType']
+            if self.guaranteeBizType !='PMF':
+                self.loanType = guarateeMessage_result['result']['loanSellerList'][0]['loanType']
+            self.riskAssetsCreditCityId = guarateeMessage_result['result']['guarantee']['riskAssetsCreditCityId']
+            self.manager_phone = guarateeMessage_result['result']['guaranteePartnerList'][0]['phone']    #经办人电话
+            self.isTwiceRepay = guarateeMessage_result_to['result']['items'][0]['isTwiceRepay']
 
-        # 查询担保单列表,取值字段
-        self.fundType = guarateeMessage_result['result']['bizTypeModel']['fundType']
-        self.guaranteeBizType = guarateeMessage_result['result']['guarantee']['guaranteeBizType']    #区分拍卖房，值：PMF或null
-        self.isRedeemselfBiz = guarateeMessage_result['result']['bizTypeModel']['isRedeemselfBiz']   #是否自赎业务
-        self.transactionType = guarateeMessage_result['result']['bizTypeModel']['transactionType']
-        if self.guaranteeBizType !='PMF':
-            self.loanType = guarateeMessage_result['result']['loanSellerList'][0]['loanType']
-        self.riskAssetsCreditCityId = guarateeMessage_result['result']['guarantee']['riskAssetsCreditCityId']
-        self.manager_phone = guarateeMessage_result['result']['guaranteePartnerList'][0]['phone']    #经办人电话
-        self.isTwiceRepay = guarateeMessage_result_to['result']['items'][0]['isTwiceRepay']
+            # 使用多线程调用函数
+            isFaceBankCheck_thread = myThread(isFaceBankCheck_message,kwargs={'url': self.url,'riskAssetsCreditCityId': self.riskAssetsCreditCityId ,'html': self.html})
+            managerOrgId_thread = myThread(manager_orgId_message,kwargs={'head_url': self.head_url,'manager_phone': self.handing_username,'manager_password':self.handing_password})
 
-        # 使用多线程调用函数
-        isFaceBankCheck_thread = myThread(isFaceBankCheck_message,kwargs={'url': self.url,'riskAssetsCreditCityId': self.riskAssetsCreditCityId ,'html': self.html})
-        managerOrgId_thread = myThread(manager_orgId_message,kwargs={'head_url': self.head_url,'manager_phone': self.handing_username,'manager_password':self.handing_password})
+            isFaceBankCheck_thread.start()
+            managerOrgId_thread.start()
 
-        isFaceBankCheck_thread.start()
-        managerOrgId_thread.start()
+            isFaceBankCheck_thread.join()
+            managerOrgId_thread.join()
 
-        isFaceBankCheck_thread.join()
-        managerOrgId_thread.join()
+            isFaceBankCheck_result = isFaceBankCheck_thread.get_result()
+            managerOrgId_result = managerOrgId_thread.get_result()[0]
 
-        isFaceBankCheck_result = isFaceBankCheck_thread.get_result()
-        managerOrgId_result = managerOrgId_thread.get_result()[0]
+            #查询是否需要面签、核行
+            self.isFaceBankCheck = isFaceBankCheck_result['result']['isFaceBankCheck']                       #是否需要平台面签、核行
 
-        #查询是否需要面签、核行
-        self.isFaceBankCheck = isFaceBankCheck_result['result']['isFaceBankCheck']                       #是否需要平台面签、核行
+            # 获取经办人的orgId、cityOrgId
+            self.html1 =  managerOrgId_thread.get_result()[1]
+            self.orgId1 = managerOrgId_result['result']['orgId']
+            self.cityOrgId1 = managerOrgId_result['result']['cityOrgId']
 
-        # 获取经办人的orgId、cityOrgId
-        self.html1 =  managerOrgId_thread.get_result()[1]
-        self.orgId1 = managerOrgId_result['result']['orgId']
-        self.cityOrgId1 = managerOrgId_result['result']['cityOrgId']
+            #登录人参数,取值字段
+            self.companyId = pickPersonInfoMessage_result['result']['companyId']
+            self.positionLinkId = pickPersonInfoMessage_result['result']['positionLinkId']
+            self.id = pickPersonInfoMessage_result['result']['id']
+            self.name = pickPersonInfoMessage_result['result']['name']
 
-        #登录人参数,取值字段
-        self.companyId = pickPersonInfoMessage_result['result']['companyId']
-        self.positionLinkId = pickPersonInfoMessage_result['result']['positionLinkId']
-        self.id = pickPersonInfoMessage_result['result']['id']
-        self.name = pickPersonInfoMessage_result['result']['name']
+            # 公司账户,取值字段
+            self.companyAccountBank = companyAccountMessage_result['result']['itemList'][0]['fundProviderName']
+            self.companyAccountId = companyAccountMessage_result['result']['itemList'][0]['id']
+            self.companyAccountName = companyAccountMessage_result['result']['itemList'][0]['accountName']
+            self.companyAccountNumber = companyAccountMessage_result['result']['itemList'][0]['accountNumber']
+            self.companyAccountAll = self.companyAccountBank + '-' + self.companyAccountName + '(' + self.companyAccountNumber + ')'
 
-        # 公司账户,取值字段
-        self.companyAccountBank = companyAccountMessage_result['result']['itemList'][0]['fundProviderName']
-        self.companyAccountId = companyAccountMessage_result['result']['itemList'][0]['id']
-        self.companyAccountName = companyAccountMessage_result['result']['itemList'][0]['accountName']
-        self.companyAccountNumber = companyAccountMessage_result['result']['itemList'][0]['accountNumber']
-        self.companyAccountAll = self.companyAccountBank + '-' + self.companyAccountName + '(' + self.companyAccountNumber + ')'
-
-        #分行、支行,取值字段
-        # self.accountBank = fundProvider_result['result']['itemList'][0]['name']
+            #分行、支行,取值字段
+            # self.accountBank = fundProvider_result['result']['itemList'][0]['name']
         etime = time.time()
         print('处理时间：', etime-stime, 's')
 
@@ -1778,7 +1780,7 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2103240001',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2103250002',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     # p.preliminary_operation_review() # 运营初审
@@ -1801,7 +1803,7 @@ if __name__ == '__main__':
     # p.process_approval()            # 流程审批
     # p.payment()                     # 出款、复核
     # p.foreclosure_building()        # 赎楼
-    p.payment_collection()          # 回款
+#     p.payment_collection()          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户

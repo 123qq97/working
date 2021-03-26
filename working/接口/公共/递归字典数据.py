@@ -86,18 +86,29 @@ url = {
 }
 
 #递归获取字典最后的值
-def recursive_filtering(data_dict,head_url):
+new_data_dict = {}
+def recursive_filtering(data_dict,head_url,key=None):
     in_head_url=head_url
+    new_data_dict[key] = {}
+
     for i in data_dict:
         if type(data_dict[i]) == dict:
-            recursive_filtering(data_dict[i],in_head_url)
+            recursive_filtering(data_dict[i],in_head_url,key=i)
 
         else:               #对获取的值处理
-            for x,y in enumerate(data_dict[i]):
-                y=in_head_url + y
-                data_dict[i][x]=y
+            if key != None:
+                new_data_dict[key][i] = []
+                for x, y in enumerate(data_dict[i]):
+                    y = in_head_url + y
+                    new_data_dict[key][i].append(y)
+            else:
+                new_data_dict[i] = []
+                for x,y in enumerate(data_dict[i]):
+                    y=in_head_url + y
+                    new_data_dict[i].append(y)
 
-    return data_dict
+    return new_data_dict
 
-# print(recursive_filtering(url,head_url='http://192.168.0.58:82'))
+# recursive_filtering(url,head_url='http://192.168.0.58:82')
+
 
