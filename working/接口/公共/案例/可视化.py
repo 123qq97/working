@@ -73,6 +73,15 @@ text.insert(tkinter.INSERT,str1)     #插入文本
 scroll.config(command=text.yview)
 text.config(yscrollcommand=scroll.set)
 
+'''-----------------------------------------------------------------------------滚动文本框（ScrolledText）'''
+from tkinter import scrolledtext
+
+#创建滚动文本框
+src = scrolledtext.ScrolledText(window,width=10,height=10,font=("隶书",10))
+# src.pack()
+src.insert(tkinter.INSERT,str1)
+
+
 
 '''-------------------------------------------------------------------------------------------Listbox控件
 

@@ -1,29 +1,29 @@
-# coding=gbk
+# -- coding: utf-8 --
 import tkinter
 from tkinter import messagebox
 from tkinter import ttk
-from ½Ó¿Ú.Á÷³Ì.Æ½Ì¨Á÷³Ì import process
-import sys
-import os
+from æ¥å£.æµç¨‹.å¹³å°æµç¨‹ import process
+from tkinter import scrolledtext
 
 head_url='http://192.168.0.58:82'
 window = tkinter.Tk()
-window.title('×Ô¶¯»¯½Ó¿Ú')
-window.geometry("400x600+800+400")
+window.title('è‡ªåŠ¨åŒ–æ¥å£')
+window.geometry("400x500+600+200")
 
 
 
 
 canvas = tkinter.Canvas(window, width=400, height=135, bg='green')
-image_file = tkinter.PhotoImage(file='../¹«¹²/°¸Àı/¼ÓÓÍ.gif')
+image_file = tkinter.PhotoImage(file='../å…¬å…±/æ¡ˆä¾‹/åŠ æ²¹.gif')
 image = canvas.create_image(200, 0, anchor='n', image=image_file)
 canvas.pack(side='top')
 # tkinter.Label(window, text='Wellcome',font=('Arial', 16)).pack()
 
-node=("ÔËÓª³õÉó","·ç¿Ø³õÉó","·ç¿Ø¸´Éó","ÊÕ·Ñ",'ÓÃ¿îÈ·ÈÏ','ÊÕÒª¼ş','Ö´ĞĞ¸Ú±¸×¢','±£º¯¼ÄËÍ','×Ê½ğ°²ÅÅ','×ÊÁÏÍÆËÍ','×Ê½ğµ½ÕË','²éµµ²éËßËÏ','ÊÕÈ¡±£Ö¤½ğ','³ö¿îÉêÇë','³ö¿îÉóÅú','Á÷³ÌÉóÅú','³ö¿î','ÊêÂ¥')
+node=("è¿è¥åˆå®¡","é£æ§åˆå®¡","é£æ§å¤å®¡","æ”¶è´¹",'ç”¨æ¬¾ç¡®è®¤','æ”¶è¦ä»¶','æ‰§è¡Œå²—å¤‡æ³¨','ä¿å‡½å¯„é€','èµ„é‡‘å®‰æ’','èµ„æ–™æ¨é€','èµ„é‡‘åˆ°è´¦','æŸ¥æ¡£æŸ¥è¯‰è®¼','æ”¶å–ä¿è¯é‡‘','å‡ºæ¬¾ç”³è¯·','å‡ºæ¬¾å®¡æ‰¹','æµç¨‹å®¡æ‰¹','å‡ºæ¬¾','èµæ¥¼')
 
 
-def go(*args):  # ´¦ÀíÊÂ¼ş£¬*args±íÊ¾¿É±ä²ÎÊı
+def go(*args):  # å¤„ç†äº‹ä»¶ï¼Œ*argsè¡¨ç¤ºå¯å˜å‚æ•°
+    process_status = True
     start_node = comboxlist1.get()
     end_node = comboxlist2.get()
     start_node_index =node.index(start_node)
@@ -31,73 +31,81 @@ def go(*args):  # ´¦ÀíÊÂ¼ş£¬*args±íÊ¾¿É±ä²ÎÊı
     odd_num = odd_name.get()
 
     if odd_name.get() == '':
-        tkinter.messagebox.showwarning(title='´íÎóÌáÊ¾', message='ÇëÊäÈëµ¥¾İºÅ£¡')  # Ìá³ö¾¯¸æ¶Ô»°´°
+        tkinter.messagebox.showwarning(title='é”™è¯¯æç¤º', message='è¯·è¾“å…¥å•æ®å·ï¼')  # æå‡ºè­¦å‘Šå¯¹è¯çª—
+        process_status = False
+    elif end_node_index < start_node_index:
+        tkinter.messagebox.showwarning(title='é”™è¯¯æç¤º', message='å¼€å§‹èŠ‚ç‚¹ä¸èƒ½åœ¨ç»“æŸèŠ‚ç‚¹ä¹‹å‰ï¼')  # æå‡ºè­¦å‘Šå¯¹è¯çª—
+        process_status = False
 
-    if end_node_index < start_node_index:
-        tkinter.messagebox.showwarning(title='´íÎóÌáÊ¾', message='¿ªÊ¼½Úµã²»ÄÜÔÚ½áÊø½ÚµãÖ®Ç°£¡')  # Ìá³ö¾¯¸æ¶Ô»°´°
+    # åˆ¤æ–­å•æ®å·é¦–å­—æ¯
+    if odd_num[0] == 'X' or odd_num[0] == 'E' or odd_num[0] == 'P':
+        pass
+    else:
+        tkinter.messagebox.showwarning(title='é”™è¯¯æç¤º', message='è¯·è¾“å…¥å®Œæ•´å•æ®å·ï¼')
+        process_status = False
 
-
-    for node_process_name in node[start_node_index:end_node_index+1]:
-        '''¿ªÊ¼-½áÊøµÄËùÓĞ½Úµã'''
+    if process_status == True:
         p = process(odd_num=odd_num, head_url=head_url, handing_username='17666121214')
-        node_func_dict = {
-            'ÔËÓª³õÉó': p.preliminary_operation_review,
-            '·ç¿Ø³õÉó': p.risk_review,
-            '·ç¿Ø¸´Éó': p.risk_recheck,
-            'ÊÕ·Ñ': p.charge,
-            'ÓÃ¿îÈ·ÈÏ': p.Payment_confirmation,
-            'ÊÕÒª¼ş': p.collection_requirements,
-            'Ö´ĞĞ¸Ú±¸×¢': p.insertRiskExecutionRemarks,
-            '±£º¯¼ÄËÍ': p.queryRiskGuaranteeMainPage,
-            '×Ê½ğ°²ÅÅ': p.financial_arrangement,
-            '×ÊÁÏÍÆËÍ': p.fund_arrange,
-            '×Ê½ğµ½ÕË': p.updateArrivalAccountStatus,
-            '²éµµ²éËßËÏ': p.updateCheckDocAndLawsuit,
-            'ÊÕÈ¡±£Ö¤½ğ': p.deposit_collection,
-            '³ö¿îÉêÇë': p.disbursement_application,
-            '³ö¿îÉóÅú': p.auditBilling,
-            'Á÷³ÌÉóÅú': p.process_approval,
-            '³ö¿î': p.payment,
-            'ÊêÂ¥': p.foreclosure_building,
-        }
-
-        node_func_dict[node_process_name]()
-
+        for node_process_name in node[start_node_index:end_node_index+1]:
+            '''å¼€å§‹-ç»“æŸçš„æ‰€æœ‰èŠ‚ç‚¹'''
+            node_func_dict = {
+                'è¿è¥åˆå®¡': p.preliminary_operation_review,
+                'é£æ§åˆå®¡': p.risk_review,
+                'é£æ§å¤å®¡': p.risk_recheck,
+                'æ”¶è´¹': p.charge,
+                'ç”¨æ¬¾ç¡®è®¤': p.Payment_confirmation,
+                'æ”¶è¦ä»¶': p.collection_requirements,
+                'æ‰§è¡Œå²—å¤‡æ³¨': p.insertRiskExecutionRemarks,
+                'ä¿å‡½å¯„é€': p.queryRiskGuaranteeMainPage,
+                'èµ„é‡‘å®‰æ’': p.financial_arrangement,
+                'èµ„æ–™æ¨é€': p.fund_arrange,
+                'èµ„é‡‘åˆ°è´¦': p.updateArrivalAccountStatus,
+                'æŸ¥æ¡£æŸ¥è¯‰è®¼': p.updateCheckDocAndLawsuit,
+                'æ”¶å–ä¿è¯é‡‘': p.deposit_collection,
+                'å‡ºæ¬¾ç”³è¯·': p.disbursement_application,
+                'å‡ºæ¬¾å®¡æ‰¹': p.auditBilling,
+                'æµç¨‹å®¡æ‰¹': p.process_approval,
+                'å‡ºæ¬¾': p.payment,
+                'èµæ¥¼': p.foreclosure_building,
+            }
+            node_func_dict[node_process_name]()
+    print('è¿è¡Œç»“æŸï¼')
     return
 
 
 
 
-# ÎÄ×Ö
-tkinter.Label(window, text='ÇëÊäÈëµ¥¾İºÅ£º', font=('Arial', 10)).place(x=90, y=150)
-tkinter.Label(window, text='¿ªÊ¼½Úµã£º', font=('Arial', 10)).place(x=90, y=185)
-tkinter.Label(window, text='½áÊø½Úµã£º', font=('Arial', 10)).place(x=90, y=225)
+# æ–‡å­—
+tkinter.Label(window, text='è¯·è¾“å…¥å•æ®å·ï¼š', font=('Arial', 10)).place(x=90, y=150)
+tkinter.Label(window, text='å¼€å§‹èŠ‚ç‚¹ï¼š', font=('Arial', 10)).place(x=90, y=185)
+tkinter.Label(window, text='ç»“æŸèŠ‚ç‚¹ï¼š', font=('Arial', 10)).place(x=90, y=225)
 
 
-#µ¥¾İºÅÊäÈë¿ò
+#å•æ®å·è¾“å…¥æ¡†
 odd_name = tkinter.Entry(window,width=13,font=('Arisl',11))
 odd_name.place(x=200,y=150,height=20)
-#ÁĞ±í¿ò1
-value1=tkinter.StringVar()#´°Ìå×Ô´øµÄÎÄ±¾£¬ĞÂ½¨Ò»¸öÖµ
-comboxlist1=ttk.Combobox(window,state='readonly',width=12) #³õÊ¼»¯
+#åˆ—è¡¨æ¡†1
+value1=tkinter.StringVar()#çª—ä½“è‡ªå¸¦çš„æ–‡æœ¬ï¼Œæ–°å»ºä¸€ä¸ªå€¼
+comboxlist1=ttk.Combobox(window,state='readonly',width=12) #åˆå§‹åŒ–
 comboxlist1["values"]=node
-comboxlist1.current(0)  #Ä¬ÈÏÑ¡ÔñµÚÒ»¸ö
-# comboxlist1.bind("<<ComboboxSelected>>",go)  #°ó¶¨ÊÂ¼ş,(ÏÂÀ­ÁĞ±í¿ò±»Ñ¡ÖĞÊ±£¬°ó¶¨go()º¯Êı)
+comboxlist1.current(0)  #é»˜è®¤é€‰æ‹©ç¬¬ä¸€ä¸ª
+# comboxlist1.bind("<<ComboboxSelected>>",go)  #ç»‘å®šäº‹ä»¶,(ä¸‹æ‹‰åˆ—è¡¨æ¡†è¢«é€‰ä¸­æ—¶ï¼Œç»‘å®šgo()å‡½æ•°)
 comboxlist1.place(x=200,y=185)
 
-#ÁĞ±í¿ò2
-comboxlist2=ttk.Combobox(window,state='readonly',width=12) #³õÊ¼»¯
+#åˆ—è¡¨æ¡†2
+comboxlist2=ttk.Combobox(window,state='readonly',width=12) #åˆå§‹åŒ–
 comboxlist2["values"]=node
-comboxlist2.current(0)  #Ä¬ÈÏÑ¡ÔñµÚÒ»¸ö
-# comboxlist2.bind("<<ComboboxSelected>>",go)  #°ó¶¨ÊÂ¼ş,(ÏÂÀ­ÁĞ±í¿ò±»Ñ¡ÖĞÊ±£¬°ó¶¨go()º¯Êı)
+comboxlist2.current(0)  #é»˜è®¤é€‰æ‹©ç¬¬ä¸€ä¸ª
+# comboxlist2.bind("<<ComboboxSelected>>",go)  #ç»‘å®šäº‹ä»¶,(ä¸‹æ‹‰åˆ—è¡¨æ¡†è¢«é€‰ä¸­æ—¶ï¼Œç»‘å®šgo()å‡½æ•°)
 comboxlist2.place(x=200,y=225)
 
 
 
-button1 = tkinter.Button(window,text="ÔËĞĞ",command=go,width=5,height=1).place(x=120,y=260)
-button2 = tkinter.Button(window,text='Í£Ö¹',command=window.quit(),width=5,height=1).place(x=240,y=260)
+button1 = tkinter.Button(window,text="è¿è¡Œ",command=go,width=5,height=1).place(x=120,y=260)
+button2 = tkinter.Button(window,text='åœæ­¢',command=window.quit(),width=5,height=1).place(x=240,y=260)
 
-
+src = scrolledtext.ScrolledText(window, width=34, height=10, font=('Arial', 10), state=tkinter.DISABLED)
+src.place(x=90,y=320)
 
 
 tkinter.mainloop()

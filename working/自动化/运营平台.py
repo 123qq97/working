@@ -115,5 +115,5 @@ class Operation_platform:
 
 
 if __name__ == '__main__':
-    o = Operation_platform(mechanism_name='易付天下',path='http://op.fangdaiyun.cn/#/Login',userphone='18888888888',password='FDY2020')
+    o = Operation_platform(mechanism_name='四川众信汇丰金融服务外包有限公司',path='http://op.fangdaiyun.cn/#/Login',userphone='18888888888',password='FDY2020')
     o.Merchant_management()

@@ -18,8 +18,8 @@ class Automatic_integration:
         self.password = password
         self.business_name = business_name
         self.login(path=self.login_url,userphone=self.userphone,password=self.password)
-        # self.business_management(user_phone=userphone,user_name=user_name,business_name=self.business_name)
-        # self.login(path=self.login_url, userphone=self.userphone)
+        self.business_management(user_phone=userphone,user_name=user_name,business_name=self.business_name)
+        self.login(path=self.login_url, userphone=self.userphone)
         self.Process_center()
 
     #登录
@@ -69,6 +69,7 @@ class Automatic_integration:
 
         business_management_dict = {
             '展开OA管理': ['按钮','//*[@id="app"]/section/section/aside/div/div/div[1]/div/ul//li/div/span[text()="' + menu_name1 + '"]/../i[2]'],
+            #组织架构
             '组织架构': ['按钮','//*[@id="app"]/section/section/aside/div/div/div[1]/div/ul//li/div/span[text()="' + menu_name1 + '"]/../../ul//li[text()="' + menu_name1_sub1 + '"]'],
             '展开第一层组织': ['按钮', '//*[@id="mainBox"]/div[2]/div[1]/div/div[3]/table/tbody/tr[1]/td[1]/div/div/i'],
             '岗位设置': ['按钮', '//*[@id="mainBox"]/div[2]/div[1]/div/div[4]/div[2]/table/tbody/tr[2]/td[4]/div/span[text()="岗位设置"]'],
@@ -111,7 +112,7 @@ class Automatic_integration:
             '岗位管理': ['按钮','//*[@id="app"]/section/section/aside/div/div/div[1]/div/ul//li/div/span[text()="' + menu_name1 + '"]/../../ul//li[text()="' + menu_name1_sub2 + '"]'],
             '岗位管理-选择组织': ['按钮','//*[@id="mainBox"]/div[1]/div[1]/div[1]/input'],
             '岗位管理-选择第二层组织': ['按钮','/html/body/div[2]/div[1]/div[1]/ul/li[2]/span'],
-            '岗位管理-客户经理-菜单设置': ['按钮','//*[@id="mainBox"]/div[2]/div[1]/div/div[3]/table/tbody/tr[1]/td[2]/div[text()="客户经理"]/../../../td[4]/div//span[text()="菜单设置"]'],
+            '岗位管理-客户经理-菜单设置': ['按钮','//*[@id="mainBox"]/div[2]/div[1]/div/div[3]/table/tbody/tr[1]//td/div[text()="客户经理"]/../../td[4]/div//span[text()="菜单设置"]'],
             '岗位管理-客户经理-展开业务管理': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor1 + '"]/../../div[2]//div/div//span[text()="' + second_floor1 + '"]/../span[1]'],
             '岗位管理-客户经理-选中业务导航': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor1 + '"]/../../div[2]//div/div//span[text()="' + second_floor1 + '"]/../../div[2]//div/span[text()="业务导航"]/../label'],
             '岗位管理-客户经理-选中打折申请': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor1 + '"]/../../div[2]//div/div//span[text()="' + second_floor1 + '"]/../../div[2]//div/span[text()="打折申请"]/../label'],
@@ -120,7 +121,7 @@ class Automatic_integration:
             '岗位管理-客户经理-选中流程审批': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor1 + '"]/../../div[2]//div/div//span[text()="' + second_floor3 + '"]/../../div[2]//div/span[text()="流程审批"]/../label'],
             '岗位管理-客户经理-选中个人中心': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor2 + '"]/../../div[2]//div/div//span[text()="' + second_floor4 + '"]/../label/span'],
             '岗位管理-客户经理-保存': ['按钮','/html/body/div[4]/div/div[3]/span/button[1]/span'],
-            '岗位管理-管理员-菜单设置': ['按钮','//*[@id="mainBox"]/div[2]/div[1]/div/div[3]/table/tbody//tr/td[2]/div/span[text()="管理员"]/../../../td[4]/div//span[text()="菜单设置"]'],
+            '岗位管理-管理员-菜单设置': ['按钮','//*[@id="mainBox"]/div[2]/div[1]/div/div[3]/table/tbody//tr//td/div[text()="管理员"]/../../td[4]/div//span[text()="菜单设置"]'],
             '岗位管理-管理员-选中资产平台': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor1 + '"]/../label/span'],
             '岗位管理-管理员-选中公共服务': ['按钮','/html/body/div[4]/div/div[2]/div/div//div/div[1]/span[text()="' + first_floor2 + '"]/../label/span'],
             '岗位管理-管理员-保存': ['按钮','/html/body/div[4]/div/div[3]/span/button[1]/span'],
@@ -144,7 +145,6 @@ class Automatic_integration:
         }
 
         for i in business_management_dict:
-            print(i,business_management_dict[i][1])
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
                     (By.XPATH, business_management_dict[i][1]))
@@ -299,4 +299,4 @@ class Automatic_integration:
 
 
 if __name__ == '__main__':
-    a = Automatic_integration(path='http://fangdaiyun.cn',userphone='13480248108',password='248108',user_name='肖波',business_name='易付天下')
+    a = Automatic_integration(path='http://fangdaiyun.cn',userphone='18981921499',password='921499',user_name='敬秋淋',business_name='众信汇丰')

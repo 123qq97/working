@@ -160,10 +160,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 # move_in_btn = driver.find_element_by_xpath('//input[@value="Write on hover"]')
 # ActionChains(driver).move_to_element_with_offset(move_in_btn,0,-21).perform()
 #拖拽drag_to元素到drag_to元素
-# driver.get('http://sahitest.com/demo/dragDropMooTools.htm')
-# drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
-# to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
-# ActionChains(driver).drag_and_drop(drag_to,to_drop)
+driver.get('http://sahitest.com/demo/dragDropMooTools.htm')
+drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
+to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
+ActionChains(driver).drag_and_drop(drag_to,to_drop).perform()
 #按住鼠标左键拖动drag_to元素，到to_drop元素放开
 # drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
 # to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
@@ -200,22 +200,22 @@ from selenium.webdriver.common.action_chains import ActionChains
 # input.send_keys(Keys.CONTROL,'a')   #全选
 
 #获取断言信息
-import time
-driver.get('https://www.baidu.com/')
-driver.find_element_by_xpath('//input[@class="s_ipt"]').send_keys('selenium')
-#打印当前页面title
-print(driver.title)
-#打印当前页面url
-print(driver.current_url)
-driver.find_element_by_xpath('//input[@value="百度一下"]').click()
-#再次打印当前页面title
-print(driver.title)
-#再次打印当前页面url
-print(driver.current_url)
-#获取当前元素文本内容
-time.sleep(1)
-text = driver.find_element_by_xpath('//span[@class="nums_text"]').text
-print(text)
+# import time
+# driver.get('https://www.baidu.com/')
+# driver.find_element_by_xpath('//input[@class="s_ipt"]').send_keys('selenium')
+# #打印当前页面title
+# print(driver.title)
+# #打印当前页面url
+# print(driver.current_url)
+# driver.find_element_by_xpath('//input[@value="百度一下"]').click()
+# #再次打印当前页面title
+# print(driver.title)
+# #再次打印当前页面url
+# print(driver.current_url)
+# #获取当前元素文本内容
+# time.sleep(1)
+# text = driver.find_element_by_xpath('//span[@class="nums_text"]').text
+# print(text)
 
 #多表单切换
 '''

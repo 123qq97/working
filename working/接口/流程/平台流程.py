@@ -238,10 +238,10 @@ class process:
             self.name = pickPersonInfoMessage_result['result']['name']
 
             # 公司账户,取值字段
-            self.companyAccountBank = companyAccountMessage_result['result']['itemList'][0]['fundProviderName']
-            self.companyAccountId = companyAccountMessage_result['result']['itemList'][0]['id']
-            self.companyAccountName = companyAccountMessage_result['result']['itemList'][0]['accountName']
-            self.companyAccountNumber = companyAccountMessage_result['result']['itemList'][0]['accountNumber']
+            self.companyAccountBank = companyAccountMessage_result['result']['itemList'][1]['fundProviderName']
+            self.companyAccountId = companyAccountMessage_result['result']['itemList'][1]['id']
+            self.companyAccountName = companyAccountMessage_result['result']['itemList'][1]['accountName']
+            self.companyAccountNumber = companyAccountMessage_result['result']['itemList'][1]['accountNumber']
             self.companyAccountAll = self.companyAccountBank + '-' + self.companyAccountName + '(' + self.companyAccountNumber + ')'
 
             #分行、支行,取值字段
@@ -1708,7 +1708,7 @@ class process:
         self.give_orders()
 
     # 回款
-    def payment_collection(self,paymentAmount=None,loanDetail_index=None):
+    def payment_collection(self,paymentAmount=None,loanDetail_index=None,repaymentDate=None):
         # 判断是否为现金业务
         if self.fundType == 'CASH':
             # 查询回款列表
@@ -1722,7 +1722,6 @@ class process:
             face_url1 = self.url['回款'][1] + '?orderId=' + orderId
             response1 = self.html.get(face_url1).text
             response1 = eval(response1)
-
 
 
             #循环借款明细
@@ -1745,6 +1744,10 @@ class process:
                 else:
                     paymentMoney = paymentAmount
 
+                #判断回款日期是否为空，为空取当前日期
+                if repaymentDate ==None:
+                    repaymentDate = self.takeDate
+
                 #获取对应的到账资金方
                 face_url2 = self.url['回款'][2] + '?loanDetailId=' + loanDetailId
                 response2 = self.html.get(face_url2).text
@@ -1764,7 +1767,7 @@ class process:
                         "companyAccountBank": self.companyAccountBank, "companyAccountId": self.companyAccountId,
                         "companyAccountName": self.companyAccountName, "companyAccountNumber": self.companyAccountNumber,
                         "companyAccountAll": self.companyAccountAll, "fundRepaymentRecordFormList":fundRepaymentRecordFormList,"fileIdList": [], "remark": "",
-                        "repaymentBranchId": repaymentBranchId, "repaymentDate": self.takeDate,
+                        "repaymentBranchId": repaymentBranchId, "repaymentDate": repaymentDate,
                         "repaymentGeneralId": repaymentGeneralId, "repaymentMoney": paymentMoney,
                         "repaymentSource": "NEW_LOAN", "repaymentOutMoney": 0
                     }
@@ -1780,7 +1783,7 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2103250002',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2104090038',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     # p.preliminary_operation_review() # 运营初审
@@ -1803,7 +1806,7 @@ if __name__ == '__main__':
     # p.process_approval()            # 流程审批
     # p.payment()                     # 出款、复核
     # p.foreclosure_building()        # 赎楼
-#     p.payment_collection()          # 回款
+    # p.payment_collection()          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户
