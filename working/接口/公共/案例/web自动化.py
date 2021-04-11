@@ -1,6 +1,7 @@
 from selenium import webdriver
 
-driver = webdriver.Chrome(executable_path='C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe')
+# driver = webdriver.Chrome(executable_path='C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe')
+driver = webdriver.Chrome()
 
 #打开url网址
 # url ='https://www.baidu.com/'
@@ -160,10 +161,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 # move_in_btn = driver.find_element_by_xpath('//input[@value="Write on hover"]')
 # ActionChains(driver).move_to_element_with_offset(move_in_btn,0,-21).perform()
 #拖拽drag_to元素到drag_to元素
-driver.get('http://sahitest.com/demo/dragDropMooTools.htm')
-drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
-to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
-ActionChains(driver).drag_and_drop(drag_to,to_drop).perform()
+# driver.get('http://sahitest.com/demo/dragDropMooTools.htm')
+# drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
+# to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
+# ActionChains(driver).drag_and_drop(drag_to,to_drop).perform()
 #按住鼠标左键拖动drag_to元素，到to_drop元素放开
 # drag_to = driver.find_element_by_xpath('//div[@class="drag"]')
 # to_drop = driver.find_element_by_xpath('//div[text()="Item 1"]')
