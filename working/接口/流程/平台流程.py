@@ -1783,7 +1783,7 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2104090038',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2104120005',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     # p.preliminary_operation_review() # 运营初审
