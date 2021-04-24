@@ -488,6 +488,7 @@ class process:
         examinerId = message_response3['result']['examinerId']
         isAddFile = message_response3['result']['isAddFile']
         isAllocation = message_response3['result']['isAllocation']
+        isSelfSupport = message_response3['result']['isSelfSupport']
         isUseChannel = message_response3['result']['isUseChannel']
         loanTotalAmount = message_response3['result']['loanTotalAmount']
         managerName = message_response3['result']['managerName']
@@ -524,7 +525,7 @@ class process:
                  "estName":estName,"estateValue":estateValue,"examineTime":null,"examinerId":examinerId,
                  "examinerName":"","guaranteeAmount":0,"guarantorSituationRemark":"","id":id,"isAddFile":isAddFile,
                  "isAllocation":isAllocation,"isBuyAllow":"","isGuarantorSituation":"","isOwnerCivilDisputes":"",
-                 "isOwnerLawsuit":"","isSuspend":"","isUseChannel":isUseChannel,"loanTotalAmount":loanTotalAmount,
+                 "isOwnerLawsuit":"","isSuspend":"","isSelfSupport": isSelfSupport,"isUseChannel":isUseChannel,"loanTotalAmount":loanTotalAmount,
                  "managerName":managerName,"margin":margin,"need":need,"normalType":"NORMAL","oldLoanSituation":oldLoanSituation,
                  "orderId":orderId,"orderNo":orderNo,"orgId":orgId,
                  "ownerCivilDisputesRemark":"","productName":productName,"ownerLawsuitRemark":"","productType":"SL","receivableAmount":"",
@@ -1211,12 +1212,35 @@ class process:
             fundOrgId = message_response1['result'][0]['fundOrgId']
             notBillingOutMoney = message_response1['result'][0]['notBillingOutMoney']
 
+            face_url2 = self.url['出款审批'][1] + '?id=' + billingDetailsId
+            message_response2 = self.html.get(face_url2).text
+            message_response2 = eval(message_response2)
+            id = message_response2['result']['billingAccountList'][0]['id']
+            billingMoney = message_response2['result']['billingAccountList'][0]['billingMoney']
+            billingRecordId = message_response2['result']['billingAccountList'][0]['billingRecordId']
+            payeeAccountBank = message_response2['result']['billingAccountList'][0]['payeeAccountBank']
+            payeeAccountBankNum = message_response2['result']['billingAccountList'][0]['payeeAccountBankNum']
+            payeeAccountName = message_response2['result']['billingAccountList'][0]['payeeAccountName']
+            payeeAccountNumber = message_response2['result']['billingAccountList'][0]['payeeAccountNumber']
+            payeeAccountType = message_response2['result']['billingAccountList'][0]['payeeAccountType']
+            payeeType = message_response2['result']['billingAccountList'][0]['payeeType']
+            sourceAccountBank = message_response2['result']['billingAccountList'][0]['sourceAccountBank']
+            sourceAccountName = message_response2['result']['billingAccountList'][0]['sourceAccountName']
+            sourceAccountNumber = message_response2['result']['billingAccountList'][0]['sourceAccountNumber']
+            isBankEnterpriseAccount = message_response2['result']['billingAccountList'][0]['isBankEnterpriseAccount']
+
             # 出款、复核办理
-            data1 = {"billingDetailsId": billingDetailsId, "billingDate": self.takeDate,
-                     "billingTotalMoney": billingTotalMoney,"fundBillingRecordFormList":[{"allotMoney":allotMoney,
+            data1 = {"billingAccountList":[{"id":id,"billingMoney":billingMoney,"billingRecordId":billingRecordId,
+                    "showBank":payeeAccountBank,"payeeAccountBank":payeeAccountBank,"payeeAccountBankNum":payeeAccountBankNum,
+                    "payeeAccountName":payeeAccountName,"payeeAccountNumber":payeeAccountNumber,"payeeAccountType":payeeAccountType,
+                    "payeeType":payeeType,"sourceAccountBank":sourceAccountBank,"sourceAccountName":sourceAccountName,
+                    "sourceAccountNumber":sourceAccountNumber,"isBankEnterpriseAccount":isBankEnterpriseAccount}],"billingDetailsId": billingDetailsId,
+                     "billingDate": self.takeDate,"billingTotalMoney": billingTotalMoney,"fundBillingRecordFormList":[{"allotMoney":allotMoney,
                      "arrivalAccountMoney":arrivalAccountMoney,"billingMoney":billingMoney,
                      "fundApplyRecordId":fundApplyRecordId,"fundOrgId":fundOrgId,"fundOrgName":fundOrgName,
-                     "notBillingOutMoney":notBillingOutMoney,"selected":false,"orderId":orderId,"finBillingRecordId":finBillingRecordId}]}
+                     "notBillingOutMoney":notBillingOutMoney,"selected":false,"orderId":orderId,"finBillingRecordId":finBillingRecordId,
+                     "AccountType":"COMPANY","SubtotalNotBillingOutMoney":billingMoney,"withdrawal":id,
+                     "accountName":sourceAccountName,"accountBank":sourceAccountBank,"accountNumber":sourceAccountNumber}]}
             data1 = json.dumps(data1, ensure_ascii=False)
             response1 = self.html.post(self.url['出款'][2], data1.encode(), headers={'Content-Type': 'application/json'})
             print(response1.text, '-------------出款')
@@ -1783,7 +1807,7 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2104120005',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2104230054',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     # p.preliminary_operation_review() # 运营初审
@@ -1802,11 +1826,11 @@ if __name__ == '__main__':
     # p.updateCheckDocAndLawsuit()    # 查档查诉讼
     # p.deposit_collection()          # 收取保证金
     # p.disbursement_application()    # 出款申请
-    # p.auditBilling()                # 出款审批
-    # p.process_approval()            # 流程审批
-    # p.payment()                     # 出款、复核
+    p.auditBilling()                # 出款审批
+    p.process_approval()            # 流程审批
+    p.payment()                     # 出款、复核
     # p.foreclosure_building()        # 赎楼
-    # p.payment_collection()          # 回款
+    # p.payment_collection(paymentAmount=900000,repaymentDate='2021-05-05')          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户

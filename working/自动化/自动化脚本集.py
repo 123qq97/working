@@ -475,4 +475,4 @@ class Automatic_integration:
                 time.sleep(0.6)
 
 if __name__ == '__main__':
-    a = Automatic_integration(path='http://fangdaiyun.cn',userphone='18981921499',password='921499',user_name='敬秋淋',business_name='众信汇丰')
+    a = Automatic_integration(path='http://fangdaiyun.cn',userphone='18934394867',password='394867',user_name='胡郁求',business_name='善者')
