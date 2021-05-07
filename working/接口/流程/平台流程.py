@@ -10,6 +10,7 @@ from 接口.其他.增加额度 import add_quota
 from 接口.其他.流程审批 import task_approval
 from 接口.公共.线程与进程案例 import myThread
 from 接口.其他.初始化方法 import *
+from 接口.其他.json格式化输出 import format_ouput
 
 # 链接
 url_dict = {
@@ -86,6 +87,7 @@ url_dict = {
     '出款申请': [
         '/web-surety/security/fnRedeem/queryFnRedeemPage',
         '/web-surety/security/billing/queryLoanDetails',
+        '/web-surety/security/business/guarantee/pickLoanSellerByGuaranteeId',
         '/web-surety/security/billing/applyBilling'],
     '出款审批': [
         '/web-surety/security/billing/queryBillingPage',
@@ -1096,6 +1098,19 @@ class process:
             response1 = self.html.get(face_url1).text
             response1 = eval(response1)
 
+            face_url2 = self.url['出款申请'][2] + '?id=' + orderId
+            response2 = self.html.get(face_url2).text
+            response2 = eval(response2)
+            #获取原贷款银行
+            loanLenderModel = response2['result'][0]['loanLenderModel']
+            if loanLenderModel == None:
+                '''当原贷款机构、个人值返回为空，取银行'''
+                oldLoanBankId = response2['result'][0]['loanMbId']
+                oldLoanBankName = response2['result'][0]['loanMbName']
+            else:
+                oldLoanBankId = loanLenderModel['id']
+                oldLoanBankName = loanLenderModel['lenderName']
+
             # 循环发起申请
             for i in range(len(response1['result'])):
                 response1 = self.html.get(face_url1).text
@@ -1113,14 +1128,15 @@ class process:
                              "billingAccountList": [{"billingMoney": notBillingOutMoney,
                                                      "payeeAccountBank": "收款开户行1", "payeeAccountName": "收款账户1",
                                                      "payeeAccountNumber": "13135435435",
-                                                     "payeeAccountType": "ELSE"}],
+                                                     "payeeAccountType": "ELSE"}],"oldLoanBankName": oldLoanBankName,"oldLoanBankId": oldLoanBankId,
                              "billingTotalMoney": notBillingOutMoney, "loanDetailsId": loanDetailsId,
                              "orderId": orderId, "orgId": "2dbb1bc7-8f87-431b-b64b-7fb9850233aa", "remark": "备注1"}
 
-                    data1 = json.dumps(data1, ensure_ascii=False)
-                    response1 = self.html.post(self.url['出款申请'][2], data1.encode(),
-                                               headers={'Content-Type': 'application/json'})
-                    print(response1.text, '-------------出款申请')
+                    data1 = json.dumps(data1, ensure_ascii=False, indent=4)
+                    print(data1)
+                    # response1 = self.html.post(self.url['出款申请'][3], data1.encode(),
+                    #                            headers={'Content-Type': 'application/json'})
+                    # print(response1.text, '-------------出款申请')
 
         except Exception as e:
             return print(e.args, '出款申请失败')
@@ -1807,7 +1823,7 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2104230054',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2105070012',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     # p.preliminary_operation_review() # 运营初审
@@ -1826,11 +1842,11 @@ if __name__ == '__main__':
     # p.updateCheckDocAndLawsuit()    # 查档查诉讼
     # p.deposit_collection()          # 收取保证金
     # p.disbursement_application()    # 出款申请
-    p.auditBilling()                # 出款审批
-    p.process_approval()            # 流程审批
-    p.payment()                     # 出款、复核
+    # p.auditBilling()                # 出款审批
+    # p.process_approval()            # 流程审批
+    # p.payment()                     # 出款、复核
     # p.foreclosure_building()        # 赎楼
-    # p.payment_collection(paymentAmount=900000,repaymentDate='2021-05-05')          # 回款
+    # p.payment_collection(paymentAmount=100000)          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户
