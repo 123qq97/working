@@ -587,7 +587,6 @@ class process:
             planTotalFee = response['result']['items'][0]['planTotalFee']
             realtotalFee = response['result']['items'][0]['realtotalFee']
             feeGeneralId = response['result']['items'][0]['feeGeneralId']
-            delayApplyId = response['result']['items'][0]['delayApplyId']
             feeStage = response['result']['items'][0]['feeStage']
             beforeLoanStatus = response['result']['items'][0]['beforeLoanStatus']
             delayStatus = response['result']['items'][0]['delayStatus']
@@ -617,6 +616,7 @@ class process:
                     return
             elif feeStage == 'DELAY_FEE_STAGE':
                 fee = '展期收费'
+                delayApplyMainId = response['result']['items'][0]['delayApplyMainId']
                 charge_url = self.url['收费'][2]
                 #展期收费
                 if delayStatus != 'YES_CONFIRM':
@@ -632,7 +632,7 @@ class process:
                     data1 = {"delayFee":currentCollectFeeMoney,"chargeDate":self.chargeDate,"companyAccountBank":self.companyAccountBank,
                              "companyAccountId":self.companyAccountId,"companyAccountName":self.companyAccountName,
                              "companyAccountNumber":self.companyAccountNumber,"fundFnFeeGeneralId":feeGeneralId,
-                             "delayApplyId":delayApplyId,"bankSerialNumber":"","fileIdList":[],"remark":""}
+                             "delayApplyMainId":delayApplyMainId,"bankSerialNumber":"","fileIdList":[],"remark":""}
                 else:
                     return
             elif feeStage == 'OVERDUE_FEE_STAGE':
@@ -658,8 +658,8 @@ class process:
             response1 = self.html.post(charge_url, data1, headers={'Content-Type': 'application/json'})
             etime = time.time()
             print(response1.text, '-------------',fee,',处理时间：',etime-stime,'s')
-        except:
-            return print('收费失败')
+        except Exception as e:
+            return print(e.args, '收费失败')
 
     #用款确认
     def Payment_confirmation(self):
@@ -1133,10 +1133,9 @@ class process:
                              "orderId": orderId, "orgId": "2dbb1bc7-8f87-431b-b64b-7fb9850233aa", "remark": "备注1"}
 
                     data1 = json.dumps(data1, ensure_ascii=False, indent=4)
-                    print(data1)
-                    # response1 = self.html.post(self.url['出款申请'][3], data1.encode(),
-                    #                            headers={'Content-Type': 'application/json'})
-                    # print(response1.text, '-------------出款申请')
+                    response1 = self.html.post(self.url['出款申请'][3], data1.encode(),
+                                               headers={'Content-Type': 'application/json'})
+                    print(response1.text, '-------------出款申请')
 
         except Exception as e:
             return print(e.args, '出款申请失败')
@@ -1823,29 +1822,29 @@ class process:
 if __name__ == '__main__':
     head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2105070012',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2105190096',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
-    # p.preliminary_operation_review() # 运营初审
-    # p.risk_review()                  # 风控初审
-    # p.risk_recheck()                 # 风控复审
-    # time.sleep(1)
-    # p.charge()                      # 收费
-    # p.Payment_confirmation()        #用款确认
-    # p.collection_requirements()     # 收要件
-    # p.insertRiskExecutionRemarks()  # 执行岗备注
-    # p.queryRiskGuaranteeMainPage()  # 保函寄送
-    #
-    # p.financial_arrangement()       #资金安排
-    # p.fund_arrange()                #资料推送
-    # p.updateArrivalAccountStatus()  # 资金到账
-    # p.updateCheckDocAndLawsuit()    # 查档查诉讼
-    # p.deposit_collection()          # 收取保证金
-    # p.disbursement_application()    # 出款申请
-    # p.auditBilling()                # 出款审批
-    # p.process_approval()            # 流程审批
-    # p.payment()                     # 出款、复核
-    # p.foreclosure_building()        # 赎楼
+    p.preliminary_operation_review() # 运营初审
+    p.risk_review()                  # 风控初审
+    p.risk_recheck()                 # 风控复审
+    time.sleep(2)
+    p.charge()                      # 收费
+    p.Payment_confirmation()        #用款确认
+    p.collection_requirements()     # 收要件
+    p.insertRiskExecutionRemarks()  # 执行岗备注
+    p.queryRiskGuaranteeMainPage()  # 保函寄送
+
+    p.financial_arrangement()       #资金安排
+    p.fund_arrange()                #资料推送
+    p.updateArrivalAccountStatus()  # 资金到账
+    p.updateCheckDocAndLawsuit()    # 查档查诉讼
+    p.deposit_collection()          # 收取保证金
+    p.disbursement_application()    # 出款申请
+    p.auditBilling()                # 出款审批
+    p.process_approval()            # 流程审批
+    p.payment()                     # 出款、复核
+    p.foreclosure_building()        # 赎楼
     # p.payment_collection(paymentAmount=100000)          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
