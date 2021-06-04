@@ -6,7 +6,7 @@ import time
 if __name__ == '__main__':
     head_url = 'http://192.168.0.65:82'  # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
 
-    p = process(odd_num='X2105180054', head_url=head_url,handing_username='18888888888',handing_password='888888')
+    p = process(odd_num='X2105280024', head_url=head_url,handing_username='18888888888',handing_password='888888')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     p.preliminary_operation_review() # 运营初审
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     p.process_approval()            # 流程审批
     p.payment()                     # 出款、复核
     p.foreclosure_building()        # 赎楼
-    # p.payment_collection()          # 回款
+    # p.payment_collection(paymentAmount=300000,fund_index=3,repaymentDate='2021-05-26')          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户

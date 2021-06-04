@@ -21,5 +21,15 @@
       <user-name>SURETY</user-name>
       <introspection-schemas>*:SURETY</introspection-schemas>
     </data-source>
+    <data-source name="axf@localhost" uuid="84940b01-7b51-4a6f-a8fe-216088006591">
+      <database-info product="MySQL" version="8.0.16" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.47 ( Revision: fe1903b1ecb4a96a917f7ed3190d80c049b1de29 )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <introspection-schemas>*:axf</introspection-schemas>
+    </data-source>
   </component>
 </project>

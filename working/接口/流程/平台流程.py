@@ -1747,7 +1747,13 @@ class process:
         self.give_orders()
 
     # 回款
-    def payment_collection(self,paymentAmount=None,loanDetail_index=None,repaymentDate=None):
+    def payment_collection(self,paymentAmount=None,fund_index=None,loanDetail_index=None,repaymentDate=None):
+        '''
+        paymentAmount: 自定义回款金额
+        loanDetail_index:选中资方
+        repaymentDate:自定义回款日期
+        '''
+
         # 判断是否为现金业务
         if self.fundType == 'CASH':
             # 查询回款列表
@@ -1762,13 +1768,13 @@ class process:
             response1 = self.html.get(face_url1).text
             response1 = eval(response1)
 
-
             #循环借款明细
             for index,i in enumerate(response1['result']):
-                #判断是否为手动设置到账资方，不是则跳过
+                # 判断是否为手动设置借款，不是则跳过
                 if loanDetail_index != None:
                     if index != loanDetail_index:
                         continue
+
                 repaymentBranchId = i['repaymentBranchId']
                 notRepaymentMoney = i['notRepaymentMoney']
                 orderId = i['orderId']
@@ -1791,14 +1797,21 @@ class process:
                 face_url2 = self.url['回款'][2] + '?loanDetailId=' + loanDetailId
                 response2 = self.html.get(face_url2).text
                 response2 = eval(response2)
-                arrivalAccountMoney = response2['result'][0]['arrivalAccountMoney']
-                fundApplyRecordId = response2['result'][0]['fundApplyRecordId']
-                fundOrgId = response2['result'][0]['fundOrgId']
-                fundOrgName = response2['result'][0]['fundOrgName']
 
-                fundRepaymentRecordFormList = [{"arrivalAccountMoney":arrivalAccountMoney,"fundApplyRecordId":fundApplyRecordId,
-                "fundOrgId":fundOrgId,"fundOrgName":fundOrgName,"notRepaymentMoney":notRepaymentMoney,"selected":true,
-                "orderId":orderId,"repaymentMoney":paymentMoney,"TotalrepaymentMoney":paymentMoney}]
+                for fundlist_index,fund_index_respnse in enumerate(response2['result']):
+                    # 判断是否为手动设置到账资方，不是则跳过
+                    if fund_index != None:
+                        if fundlist_index != fund_index:
+                            continue
+
+                    arrivalAccountMoney = fund_index_respnse['arrivalAccountMoney']
+                    fundApplyRecordId = fund_index_respnse['fundApplyRecordId']
+                    fundOrgId = fund_index_respnse['fundOrgId']
+                    fundOrgName = fund_index_respnse['fundOrgName']
+
+                    fundRepaymentRecordFormList = [{"arrivalAccountMoney":arrivalAccountMoney,"fundApplyRecordId":fundApplyRecordId,
+                    "fundOrgId":fundOrgId,"fundOrgName":fundOrgName,"notRepaymentMoney":notRepaymentMoney,"selected":true,
+                    "orderId":orderId,"repaymentMoney":paymentMoney,"TotalrepaymentMoney":paymentMoney}]
 
                 # 判断剩余借款是否大于0
                 if notRepaymentMoney > 0:
@@ -1820,9 +1833,9 @@ class process:
 
 #主代码12
 if __name__ == '__main__':
-    head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031
+    head_url='http://192.168.0.58:82'   # http://192.168.0.58:82  or  http://189i0341c8.iok.la:27031       X2105240055
 
-    p = process(odd_num='X2105190096',head_url=head_url,handing_username='17666121214')
+    p = process(odd_num='X2106040027',head_url=head_url,handing_username='17666121214')
     # p.face_signature()             # 平台面签
     # p.nuclear_row()                # 平台核行
     p.preliminary_operation_review() # 运营初审
@@ -1833,19 +1846,19 @@ if __name__ == '__main__':
     p.Payment_confirmation()        #用款确认
     p.collection_requirements()     # 收要件
     p.insertRiskExecutionRemarks()  # 执行岗备注
-    p.queryRiskGuaranteeMainPage()  # 保函寄送
+    # p.queryRiskGuaranteeMainPage()  # 保函寄送
 
-    p.financial_arrangement()       #资金安排
-    p.fund_arrange()                #资料推送
-    p.updateArrivalAccountStatus()  # 资金到账
-    p.updateCheckDocAndLawsuit()    # 查档查诉讼
-    p.deposit_collection()          # 收取保证金
-    p.disbursement_application()    # 出款申请
-    p.auditBilling()                # 出款审批
-    p.process_approval()            # 流程审批
-    p.payment()                     # 出款、复核
-    p.foreclosure_building()        # 赎楼
-    # p.payment_collection(paymentAmount=100000)          # 回款
+    # p.financial_arrangement()       #资金安排
+    # p.fund_arrange()                #资料推送
+    # p.updateArrivalAccountStatus()  # 资金到账
+    # p.updateCheckDocAndLawsuit()    # 查档查诉讼
+    # p.deposit_collection()          # 收取保证金
+    # p.disbursement_application()    # 出款申请
+    # p.auditBilling()                # 出款审批
+    # p.process_approval()            # 流程审批
+    # p.payment()                     # 出款、复核
+    # p.foreclosure_building()        # 赎楼
+    # p.payment_collection(repaymentDate='2021-06-18')          # 回款
     # p.insertFnCertTake()            # 取原证
     # p.cancellation_of_original_certificate()  # 原证注销
     # p.transfer()                    # 过户

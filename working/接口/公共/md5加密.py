@@ -8,4 +8,4 @@ def md5_encryption(content):
 
 
 
-# print(md5_encryption('888888'))
+# print(md5_encryption('123456'))
